@@ -6,8 +6,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 const JWT_SECRET = process.env.JWT_SIGN;
+const fetchUser = require("../Middleware/fetchUser");
 
-// Create a User using: POST "/api/auth/createuser". No login required
+// Route 1: Create a User using: POST "/api/auth/createuser". No login required
 router.post(
   "/createuser",
   [
@@ -60,7 +61,7 @@ router.post(
   }
 );
 
-// Authenticate User using: POST "/api/auth/login". Doesn't require Auth
+// Route 2: Authenticate User using: POST "/api/auth/login". No login required
 router.post(
   "/login",
   [
@@ -106,5 +107,17 @@ router.post(
     }
   }
 );
+
+// Route 3: Get User details using: POST "/api/auth/getuser". Login required
+router.post("/getuser", fetchUser, async (req, res) => {
+  try {
+    let userId = req.user.id;
+    const user = await User.findById(userId).select("-password")
+    res.send(user)
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server error may have occured");
+  }
+});
 
 module.exports = router;
