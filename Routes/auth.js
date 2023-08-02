@@ -5,7 +5,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
-const JWT_SECRET = process.env.JWT_SIGN;
+const JWT_SECRET = "Zbq5MjoaE";
 const fetchUser = require("../Middleware/fetchUser");
 
 // Route 1: Create a User using: POST "/api/auth/createuser". No login required
@@ -103,6 +103,7 @@ router.post(
       res.json({ authtoken });
     } catch (error) {
       console.error(error.message);
+      console.log(JWT_SECRET);
       res.status(500).send("Internal Server error may have occured");
     }
   }
@@ -112,8 +113,8 @@ router.post(
 router.post("/getuser", fetchUser, async (req, res) => {
   try {
     let userId = req.user.id;
-    const user = await User.findById(userId).select("-password")
-    res.send(user)
+    const user = await User.findById(userId).select("-password");
+    res.send(user);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server error may have occured");
